@@ -1,0 +1,35 @@
+
+.sidebar {
+    width: 240px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+}
+
+.sidebar .nav-link {
+    color: #bbb;
+    margin: 5px 0;
+    border-radius: 8px;
+}
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+    background: #e0e4e8;
+    color: #fff;
+}
+
+
+.content {
+    margin-left: 240px;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+
+.card {
+    border-radius: 12px;
+}
+.chart-placeholder {
+    border-radius: 8px;
+    border: 2px dashed #ccc;
+}

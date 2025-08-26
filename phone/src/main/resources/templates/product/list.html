@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách sản phẩm</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #f9fafc;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+        }
+
+        h2 {
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .btn {
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+        }
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            border-radius: 14px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            background: white;
+        }
+
+        .filter-card {
+            background: #f4f6f9;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+        }
+        .table thead {
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+            color: white;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #eef7ff;
+        }
+
+        .pagination .page-link {
+            color: #4facfe;
+            border-radius: 6px;
+            margin: 0 2px;
+        }
+        .pagination .active .page-link {
+            background-color: #4facfe;
+            border-color: #4facfe;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="card p-4">
+        <h2 class="mb-4 text-center">DANH SÁCH SẢN PHẨM</h2>
+
+        <!-- Thanh chức năng -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="/dashboard" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left-circle me-2"></i> Quay lại Dashboard
+            </a>
+            <a href="/products/add" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Thêm sản phẩm
+            </a>
+        </div>
+
+        <!-- Bộ lọc tìm kiếm -->
+        <div class="filter-card mb-4">
+            <h5 class="mb-3"><i class="bi bi-funnel me-2"></i>Bộ lọc tìm kiếm</h5>
+            <form class="row g-3">
+
+                <!-- Brand -->
+                <div class="col-md-4">
+                    <input type="text" name="brand" class="form-control" placeholder="Tìm theo Brand..."
+                           th:value="${keyword}">
+                </div>
+
+                <!-- Price range -->
+                <div class="col-md-3">
+                    <input type="number" name="min" class="form-control" placeholder="Giá từ">
+                </div>
+                <div class="col-md-3">
+                    <input type="number" name="max" class="form-control" placeholder="Giá đến">
+                </div>
+
+                <!-- Stock -->
+                <div class="col-md-2">
+                    <input type="number" name="stock" class="form-control" placeholder="Tồn kho ≥">
+                </div>
+
+                <!-- Nút tìm -->
+                <div class="col-12 text-end">
+                    <button type="submit" formaction="/products/search/brand" class="btn btn-primary me-2">
+                        <i class="bi bi-search"></i> Tìm theo Brand
+                    </button>
+                    <button type="submit" formaction="/products/search/price" class="btn btn-info me-2">
+                        <i class="bi bi-cash-coin"></i> Tìm theo Giá
+                    </button>
+                    <button type="submit" formaction="/products/search/stock" class="btn btn-warning">
+                        <i class="bi bi-box-seam"></i> Tìm theo Stock
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Bảng danh sách -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead>
+                <tr class="text-center">
+                    <th>ID</th>
+                    <th>Tên</th>
+                    <th>Brand</th>
+                    <th>Giá (VNĐ)</th>
+                    <th>Stock</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${products}">
+                    <td th:text="${p.id}" class="text-center"></td>
+                    <td th:text="${p.name}"></td>
+                    <td th:text="${p.brand}"></td>
+                    <td th:text="${#numbers.formatDecimal(p.price, 0, 'POINT', 0, 'COMMA')}" class="text-end"></td>
+                    <td th:text="${p.stock}" class="text-center"></td>
+                    <td class="text-center">
+                        <a th:href="@{'/products/edit/' + ${p.id}}" class="btn btn-warning btn-sm me-1">
+                            <i class="bi bi-pencil-square"></i> Sửa
+                        </a>
+                        <a th:href="@{'/products/delete/' + ${p.id}}" class="btn btn-danger btn-sm"
+                           onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
+                            <i class="bi bi-trash"></i> Xóa
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Phân trang -->
+        <nav th:if="${totalPages > 1}">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a th:href="@{'/products?page=0'}" class="page-link">First</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a th:href="@{'/products?page=' + ${i}}" class="page-link" th:text="${i + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? 'disabled'">
+                    <a th:href="@{'/products?page=' + (${totalPages - 1})}" class="page-link">Last</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
