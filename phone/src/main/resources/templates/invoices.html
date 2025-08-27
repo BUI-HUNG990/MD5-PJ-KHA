@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h2 class="mb-4">Quản lý hóa đơn</h2>
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addInvoiceModal">
+        Thêm mới hóa đơn
+    </button>
+
+    <!-- Invoices table -->
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Tên khách hàng</th>
+            <th>Ngày tạo</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="invoice : ${invoices}">
+            <td th:text="${invoice.id}"></td>
+            <td th:text="${invoice.customer.name}"></td>
+            <td th:text="${#dates.format(invoice.createdAt, 'dd/MM/yyyy')}"></td>
+            <td th:text="${#numbers.formatDecimal(invoice.totalAmount, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></td>
+            <td>
+                <span th:text="${invoice.status}"
+                      th:classappend="${invoice.status == 'PAID'} ? 'badge bg-success' : 'badge bg-warning'"></span>
+            </td>
+            <td>
+                <form th:action="@{/invoices/change-status/{id}(id=${invoice.id})}" method="post">
+                    <button type="submit" class="btn btn-sm btn-info">Đổi trạng thái</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Add Invoice -->
+<div class="modal fade" id="addInvoiceModal" tabindex="-1" aria-labelledby="addInvoiceLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form th:action="@{/invoices/save}" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addInvoiceLabel">Thêm mới hóa đơn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="customerId" class="form-label">Khách hàng</label>
+                    <select id="customerId" name="customerId" class="form-select" required>
+                        <option value="">-- Chọn khách hàng --</option>
+                        <option th:each="c : ${customers}"
+                                th:value="${c.id}"
+                                th:text="${c.name}"></option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="totalAmount" class="form-label">Tổng tiền</label>
+                    <input type="number" class="form-control" id="totalAmount" name="totalAmount" required>
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">Trạng thái</label>
+                    <select id="status" name="status" class="form-select">
+                        <option value="PENDING">Pending</option>
+                        <option value="PAID">Paid</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
