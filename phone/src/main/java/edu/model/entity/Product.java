@@ -30,14 +30,13 @@ public class Product {
     @Column(nullable = false)
     private Integer stock;
 
-    // cho phép null để không bắt buộc nhập ảnh
     @Column(length = 255, nullable = true)
     private String image = "";
 
     @Column(name = "is_deleted", columnDefinition = "bit(1) default 0")
     private Boolean isDeleted = false;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvoiceDetail> invoiceDetails;
 }
 

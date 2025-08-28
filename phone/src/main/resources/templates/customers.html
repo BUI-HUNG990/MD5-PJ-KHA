@@ -127,7 +127,7 @@
     </div>
 </div>
 
-<!-- Modal Thêm khách hàng -->
+
 <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <form th:action="@{/customers/save}" method="post" class="modal-content">
@@ -161,7 +161,7 @@
     </div>
 </div>
 
-<!-- Modal Sửa khách hàng -->
+
 <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <form th:action="@{/customers/update}" method="post" class="modal-content" id="editCustomerForm">
@@ -198,7 +198,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Fill dữ liệu cho modal Sửa
+
     var editModal = document.getElementById('editCustomerModal');
     editModal.addEventListener('show.bs.modal', function (event) {
         var button = event.relatedTarget;

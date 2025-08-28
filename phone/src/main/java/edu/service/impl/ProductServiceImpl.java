@@ -18,7 +18,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product save(Product product) {
         if (product.getImage() == null) {
-            product.setImage(""); // hoặc "no-image.png"
+            product.setImage("");
         }
         return productRepository.save(product);
     }

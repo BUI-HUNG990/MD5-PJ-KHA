@@ -6,13 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
 
-    // Tìm kiếm gần đúng theo tên KH hoặc ngày tạo
     @Query("""
         SELECT i FROM Invoice i
         WHERE (LOWER(i.customer.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -20,15 +20,14 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
         """)
     Page<Invoice> search(String keyword, Pageable pageable);
 
-    // Tổng doanh thu theo ngày
     @Query("SELECT SUM(i.totalAmount) FROM Invoice i WHERE DATE(i.createdAt) = :date AND i.status='COMPLETED'")
-    BigDecimal getRevenueByDate(LocalDate date);
+    BigDecimal getRevenueByDate(@Param("date") LocalDate date);
 
-    // Tổng doanh thu theo tháng
+
     @Query("SELECT SUM(i.totalAmount) FROM Invoice i WHERE MONTH(i.createdAt) = :month AND YEAR(i.createdAt) = :year AND i.status='COMPLETED'")
-    BigDecimal getRevenueByMonth(int month, int year);
+    BigDecimal getRevenueByMonth(@Param("month") int month,@Param("year") int year);
 
-    // Tổng doanh thu theo năm
+
     @Query("SELECT SUM(i.totalAmount) FROM Invoice i WHERE YEAR(i.createdAt) = :year AND i.status='COMPLETED'")
-    BigDecimal getRevenueByYear(int year);
+    BigDecimal getRevenueByYear(@Param("year") int year);
 }

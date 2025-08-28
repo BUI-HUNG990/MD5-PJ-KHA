@@ -65,7 +65,6 @@ public class ProductController {
         return "redirect:/products";
     }
 
-    // ✅ Tìm kiếm theo brand (phân trang)
     @GetMapping("/search/brand")
     public String searchByBrand(@RequestParam String brand,
                                 @RequestParam(defaultValue = "0") int page,
@@ -78,7 +77,6 @@ public class ProductController {
         return "product/list";
     }
 
-    // ✅ Tìm kiếm theo khoảng giá (phân trang)
     @GetMapping("/search/price")
     public String searchByPrice(@RequestParam BigDecimal min,
                                 @RequestParam BigDecimal max,
@@ -93,7 +91,7 @@ public class ProductController {
         return "product/list";
     }
 
-    // ✅ Tìm kiếm theo tồn kho (phân trang)
+
     @GetMapping("/search/stock")
     public String searchByStock(@RequestParam Integer stock,
                                 @RequestParam(defaultValue = "0") int page,

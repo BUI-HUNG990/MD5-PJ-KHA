@@ -9,14 +9,13 @@
 
 <h2 class="mb-4 text-center">Edit Product</h2>
 
-<!-- Hiển thị lỗi nếu có -->
 <div th:if="${errorMessage}" class="alert alert-danger">
     <span th:text="${errorMessage}"></span>
 </div>
 
 <form th:action="@{/products/update}" th:object="${product}" method="post" class="border p-4 rounded shadow-sm">
 
-    <!-- ID ẩn để đảm bảo update -->
+
     <input type="hidden" th:field="*{id}"/>
 
     <div class="mb-3">

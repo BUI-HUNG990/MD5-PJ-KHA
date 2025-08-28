@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice Management</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h2 class="text-center mb-4 fw-bold" style="font-size: 2rem;">Quản lý hóa đơn</h2>
+
+    <div class="d-flex justify-content-between mb-3">
+        <a th:href="@{/dashboard}" class="btn btn-secondary">Quay về Dashboard</a>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addInvoiceModal">Thêm mới hóa đơn</button>
+    </div>
+
+
+    <form th:action="@{/invoices}" method="get" class="row g-2 mb-3">
+        <div class="col-md-6">
+            <input type="text" class="form-control" name="keyword"
+                   placeholder="Nhập tên khách hàng hoặc ngày (dd/MM/yyyy)"
+                   th:value="${keyword}">
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-success w-100">Tìm kiếm</button>
+        </div>
+        <div class="col-md-3">
+            <a th:href="@{/invoices/statistics}" class="btn btn-warning">Thống kê doanh thu</a>
+        </div>
+    </form>
+
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Tên khách hàng</th>
+            <th>Ngày tạo</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="invoice : ${invoices}">
+            <td th:text="${invoice.id}"></td>
+            <td th:text="${invoice.customer.name}"></td>
+            <td th:text="${#dates.format(invoice.createdAt, 'dd/MM/yyyy')}"></td>
+            <td th:text="${#numbers.formatDecimal(invoice.totalAmount, 0, 'POINT', 0, 'COMMA')} + ' ₫'"></td>
+            <td>
+                <span th:text="${invoice.status}"
+                      th:classappend="${invoice.status == 'PAID'} ? 'badge bg-success' : 'badge bg-warning'"></span>
+            </td>
+            <td>
+
+                <form th:action="@{'/invoices/update-status/' + ${invoice.id}}" method="post" class="mb-1">
+                    <select name="status" class="form-select form-select-sm d-inline w-auto">
+                        <option value="PENDING" th:selected="${invoice.status == 'PENDING'}">Chờ xác nhận</option>
+                        <option value="CONFIRMED" th:selected="${invoice.status == 'CONFIRMED'}">Đã xác nhận</option>
+                        <option value="SHIPING" th:selected="${invoice.status == 'SHIPING'}">Đang giao hàng</option>
+                        <option value="COMPLETED" th:selected="${invoice.status == 'COMPLETED'}">Hoàn thành</option>
+                        <option value="CANCELED" th:selected="${invoice.status == 'CANCELED'}">Đã hủy</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-info">Cập nhật</button>
+                    <a th:href="@{/invoices/details/{id}(id=${invoice.id})}" class="btn btn-sm btn-secondary">
+                        Chi tiết
+                    </a>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+
+    <nav aria-label="Page navigation" class="mt-3">
+        <ul class="pagination justify-content-center">
+
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/invoices(page=${currentPage - 1}, size=${5}, keyword=${keyword})}">
+                    Previous
+                </a>
+            </li>
+
+
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/invoices(page=${i}, size=${5}, keyword=${keyword})}"
+                   th:text="${i + 1}">
+                </a>
+            </li>
+
+
+            <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/invoices(page=${currentPage + 1}, size=${5}, keyword=${keyword})}">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+
+<div class="modal fade" id="addInvoiceModal" tabindex="-1" aria-labelledby="addInvoiceLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form th:action="@{/invoices/save}" method="post" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addInvoiceLabel">Thêm mới hóa đơn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="customerId" class="form-label">Khách hàng</label>
+                    <select id="customerId" name="customerId" class="form-select" required>
+                        <option value="">-- Chọn khách hàng --</option>
+                        <option th:each="c : ${customers}" th:value="${c.id}" th:text="${c.name}"></option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="productId" class="form-label">Sản phẩm</label>
+                    <select id="productId" name="details[0].product.id" class="form-select" required>
+                        <option value="">-- Chọn sản phẩm --</option>
+                        <option th:each="p : ${products}" th:value="${p.id}" th:text="${p.name}"></option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Số lượng</label>
+                    <input type="number" class="form-control" id="quantity" name="details[0].quantity" min="1" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

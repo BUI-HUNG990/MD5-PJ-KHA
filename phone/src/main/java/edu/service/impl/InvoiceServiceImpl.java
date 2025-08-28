@@ -1,6 +1,8 @@
 package edu.service.impl;
 
-import edu.model.entity.*;
+import edu.model.entity.Invoice;
+import edu.model.entity.InvoiceDetail;
+import edu.model.entity.Product;
 import edu.repo.InvoiceRepository;
 import edu.repo.ProductRepository;
 import edu.service.InvoiceService;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,25 +26,28 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     @Transactional
     public Invoice createInvoice(Invoice invoice) {
-        // Tính tổng tiền + trừ tồn kho
-        BigDecimal total = invoice.getTotalAmount();
+        BigDecimal total = BigDecimal.ZERO;
 
-        if (invoice.getDetails() != null) {
-            total = BigDecimal.ZERO;
+        if (invoice.getDetails() != null && !invoice.getDetails().isEmpty()) {
             for (InvoiceDetail d : invoice.getDetails()) {
-                var product = productRepository.findById(d.getProduct().getId())
-                        .orElseThrow(() -> new RuntimeException("Product not found"));
+                Product product = productRepository.findById(d.getProduct().getId())
+                        .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
 
                 if (product.getStock() < d.getQuantity()) {
                     throw new RuntimeException("Sản phẩm " + product.getName() + " không đủ tồn kho!");
                 }
 
+                // Giảm tồn kho
                 product.setStock(product.getStock() - d.getQuantity());
                 productRepository.save(product);
 
-                d.setInvoice(invoice);
+                // Gán đơn giá, liên kết chi tiết với hóa đơn
                 d.setUnitPrice(product.getPrice());
-                total = total.add(product.getPrice().multiply(BigDecimal.valueOf(d.getQuantity())));
+                d.setInvoice(invoice);
+
+                // Tính tiền
+                total = total.add(product.getPrice()
+                        .multiply(BigDecimal.valueOf(d.getQuantity())));
             }
         }
 
@@ -51,22 +57,37 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     @Transactional
-    public Invoice updateStatus(Integer invoiceId, Invoice.Status status) {
+    public Invoice updateStatus(Integer invoiceId, Invoice.Status newStatus) {
         Invoice invoice = invoiceRepository.findById(invoiceId)
-                .orElseThrow(() -> new RuntimeException("Invoice not found"));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn"));
 
-        // Nếu hủy đơn → trả lại tồn kho
-        if (status == Invoice.Status.CANCELED && invoice.getStatus() != Invoice.Status.CANCELED) {
+        Invoice.Status oldStatus = invoice.getStatus();
+
+        // Nếu chuyển từ trạng thái khác sang HUỶ → cộng lại tồn kho
+        if (newStatus == Invoice.Status.CANCELED && oldStatus != Invoice.Status.CANCELED) {
             for (InvoiceDetail d : invoice.getDetails()) {
-                var product = d.getProduct();
+                Product product = d.getProduct();
                 product.setStock(product.getStock() + d.getQuantity());
                 productRepository.save(product);
             }
         }
 
-        invoice.setStatus(status);
+        // Nếu chuyển từ HUỶ → sang trạng thái khác → trừ lại tồn kho
+        if (oldStatus == Invoice.Status.CANCELED && newStatus != Invoice.Status.CANCELED) {
+            for (InvoiceDetail d : invoice.getDetails()) {
+                Product product = d.getProduct();
+                if (product.getStock() < d.getQuantity()) {
+                    throw new RuntimeException("Sản phẩm " + product.getName() + " không đủ tồn kho để khôi phục đơn hàng!");
+                }
+                product.setStock(product.getStock() - d.getQuantity());
+                productRepository.save(product);
+            }
+        }
+
+        invoice.setStatus(newStatus);
         return invoiceRepository.save(invoice);
     }
+
 
     @Override
     public Page<Invoice> findAll(Pageable pageable) {
@@ -80,16 +101,33 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     public BigDecimal getRevenueByDate(LocalDate date) {
-        return invoiceRepository.getRevenueByDate(date);
+        BigDecimal revenueByDate = invoiceRepository.getRevenueByDate(date);
+        return revenueByDate;
     }
 
     @Override
     public BigDecimal getRevenueByMonth(int month, int year) {
-        return invoiceRepository.getRevenueByMonth(month, year);
+        BigDecimal revenueByMonth = invoiceRepository.getRevenueByMonth(month, year);
+        System.out.println(revenueByMonth);
+        return revenueByMonth;
     }
 
     @Override
     public BigDecimal getRevenueByYear(int year) {
-        return invoiceRepository.getRevenueByYear(year);
+        BigDecimal revenueByYear = invoiceRepository.getRevenueByYear(year);
+        System.out.println(revenueByYear);
+        return revenueByYear;
     }
+
+    @Override
+    public Invoice findById(Long id) {
+        return invoiceRepository.findById(Math.toIntExact(id))
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn"));
+    }
+
+    @Override
+    public List<Invoice> getAllInvoices() {
+        return invoiceRepository.findAll();
+    }
+
 }

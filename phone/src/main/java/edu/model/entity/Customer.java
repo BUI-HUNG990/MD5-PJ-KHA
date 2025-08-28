@@ -3,6 +3,8 @@ package edu.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "customer")
 @Getter
@@ -14,20 +16,23 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;  // Mã KH
+    private Integer id;
 
     @Column(nullable = false, length = 100)
-    private String name;  // Họ tên KH
+    private String name;
 
     @Column(nullable = false, length = 20, unique = true)
-    private String phone;  // SĐT
+    private String phone;
 
     @Column(length = 100, unique = true)
-    private String email;  // Email (cho phép null)
+    private String email;
 
     @Column(length = 255)
-    private String address;  // Địa chỉ
+    private String address;
 
     @Column(name = "is_deleted", columnDefinition = "bit(1) default 0")
-    private Boolean isDeleted = false;  // true: ẩn, false: hiện
+    private Boolean isDeleted = false;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invoice> invoices;
 }
