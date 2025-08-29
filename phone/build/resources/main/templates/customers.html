@@ -67,6 +67,7 @@
         <h2 class="mb-4 text-center">DANH SÁCH KHÁCH HÀNG</h2>
 
         <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+        <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
 
         <div class="d-flex justify-content-between mb-3">
             <a href="/dashboard" class="btn btn-outline-primary d-flex align-items-center">

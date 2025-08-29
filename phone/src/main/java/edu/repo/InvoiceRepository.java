@@ -22,6 +22,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
     Page<Invoice> search(String keyword, Pageable pageable);
 
 
+
     @Query("SELECT SUM(i.totalAmount) FROM Invoice i WHERE DATE(i.createdAt) = :date AND i.status='COMPLETED'")
     BigDecimal getRevenueByDate(@Param("date") LocalDate date);
 

@@ -80,7 +80,7 @@ public class InvoiceController {
 
         model.addAttribute("invoice", invoice);
         model.addAttribute("details", invoice.getDetails());
-        return "invoice_details";  // invoice_details.html
+        return "invoice_details";
     }
 
     @PostMapping("/invoices/add")

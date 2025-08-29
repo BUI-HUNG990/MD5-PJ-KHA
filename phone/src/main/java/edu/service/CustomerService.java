@@ -19,4 +19,7 @@ public interface CustomerService {
     List<Customer> searchByNameOrPhone(String name, String phone);
 
     Page<Customer> searchCustomers(String keyword, int page);
+
+    boolean hasInvoice(Integer customerId);
+
 }

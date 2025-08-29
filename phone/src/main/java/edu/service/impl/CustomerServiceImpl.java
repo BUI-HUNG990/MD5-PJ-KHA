@@ -101,4 +101,9 @@ public class CustomerServiceImpl implements CustomerService {
         return null;
     }
 
+    @Override
+    public boolean hasInvoice(Integer customerId) {
+        return customerRepository.existsInvoiceByCustomerId(customerId);
+    }
+
 }

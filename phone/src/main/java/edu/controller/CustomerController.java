@@ -71,22 +71,17 @@ public class CustomerController {
         return "redirect:/customers";
     }
 
+
     @GetMapping("/delete/{id}")
-    public String deleteCustomer(@PathVariable Integer id) {
-        customerService.delete(id);
+    public String deleteCustomer(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        if (customerService.hasInvoice(id)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Không thể xóa, khách hàng đã có hóa đơn.");
+        } else {
+            customerService.delete(id); // dùng lại hàm delete() có sẵn
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa khách hàng thành công!");
+        }
         return "redirect:/customers";
     }
-
-//    @GetMapping("/delete/{id}")
-//    public String deleteCustomer(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
-//        try {
-//            customerService.delete(id);
-//            redirectAttributes.addFlashAttribute("successMessage", "Xóa khách hàng thành công!");
-//        } catch (RuntimeException e) {
-//            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-//        }
-//        return "redirect:/customers";
-//    }
 
 
     @GetMapping("/search")

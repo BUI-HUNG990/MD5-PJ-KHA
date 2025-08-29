@@ -8,6 +8,7 @@ import edu.repo.ProductRepository;
 import edu.service.InvoiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,6 +99,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Page<Invoice> search(String keyword, Pageable pageable) {
         return invoiceRepository.search(keyword, pageable);
     }
+
 
     @Override
     public BigDecimal getRevenueByDate(LocalDate date) {
