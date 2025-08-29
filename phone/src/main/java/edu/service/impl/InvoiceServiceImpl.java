@@ -37,15 +37,15 @@ public class InvoiceServiceImpl implements InvoiceService {
                     throw new RuntimeException("Sản phẩm " + product.getName() + " không đủ tồn kho!");
                 }
 
-                // Giảm tồn kho
+
                 product.setStock(product.getStock() - d.getQuantity());
                 productRepository.save(product);
 
-                // Gán đơn giá, liên kết chi tiết với hóa đơn
+
                 d.setUnitPrice(product.getPrice());
                 d.setInvoice(invoice);
 
-                // Tính tiền
+
                 total = total.add(product.getPrice()
                         .multiply(BigDecimal.valueOf(d.getQuantity())));
             }
@@ -63,7 +63,7 @@ public class InvoiceServiceImpl implements InvoiceService {
 
         Invoice.Status oldStatus = invoice.getStatus();
 
-        // Nếu chuyển từ trạng thái khác sang HUỶ → cộng lại tồn kho
+
         if (newStatus == Invoice.Status.CANCELED && oldStatus != Invoice.Status.CANCELED) {
             for (InvoiceDetail d : invoice.getDetails()) {
                 Product product = d.getProduct();
@@ -72,7 +72,7 @@ public class InvoiceServiceImpl implements InvoiceService {
             }
         }
 
-        // Nếu chuyển từ HUỶ → sang trạng thái khác → trừ lại tồn kho
+
         if (oldStatus == Invoice.Status.CANCELED && newStatus != Invoice.Status.CANCELED) {
             for (InvoiceDetail d : invoice.getDetails()) {
                 Product product = d.getProduct();

@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
 
@@ -19,6 +20,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
                OR CAST(i.createdAt AS string) LIKE %:keyword%)
         """)
     Page<Invoice> search(String keyword, Pageable pageable);
+
 
     @Query("SELECT SUM(i.totalAmount) FROM Invoice i WHERE DATE(i.createdAt) = :date AND i.status='COMPLETED'")
     BigDecimal getRevenueByDate(@Param("date") LocalDate date);
@@ -30,4 +32,5 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
 
     @Query("SELECT SUM(i.totalAmount) FROM Invoice i WHERE YEAR(i.createdAt) = :year AND i.status='COMPLETED'")
     BigDecimal getRevenueByYear(@Param("year") int year);
+
 }

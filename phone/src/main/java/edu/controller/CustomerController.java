@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -41,7 +42,6 @@ public class CustomerController {
         } catch (RuntimeException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
 
-            // load lại phân trang khi có lỗi
             Page<Customer> customerPage = customerService.findPaginated(PageRequest.of(0, 5));
             model.addAttribute("customers", customerPage);
             model.addAttribute("currentPage", 0);
@@ -76,6 +76,18 @@ public class CustomerController {
         customerService.delete(id);
         return "redirect:/customers";
     }
+
+//    @GetMapping("/delete/{id}")
+//    public String deleteCustomer(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+//        try {
+//            customerService.delete(id);
+//            redirectAttributes.addFlashAttribute("successMessage", "Xóa khách hàng thành công!");
+//        } catch (RuntimeException e) {
+//            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+//        }
+//        return "redirect:/customers";
+//    }
+
 
     @GetMapping("/search")
     public String searchCustomers(@RequestParam(required = false) String keyword,

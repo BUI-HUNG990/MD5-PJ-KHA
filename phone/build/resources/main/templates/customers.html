@@ -70,7 +70,7 @@
 
         <div class="d-flex justify-content-between mb-3">
             <a href="/dashboard" class="btn btn-outline-primary d-flex align-items-center">
-                <i class="bi bi-arrow-left-circle me-2"></i> Quay lại Dashboard
+                <i class="bi bi-arrow-left-circle me-2"></i> Dashboard
             </a>
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
                 <i class="bi bi-plus-circle"></i> Thêm khách hàng
@@ -127,7 +127,7 @@
     </div>
 </div>
 
-<!-- Modal Thêm khách hàng -->
+
 <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <form th:action="@{/customers/save}" method="post" class="modal-content">
@@ -161,7 +161,7 @@
     </div>
 </div>
 
-<!-- Modal Sửa khách hàng -->
+
 <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <form th:action="@{/customers/update}" method="post" class="modal-content" id="editCustomerForm">
@@ -198,7 +198,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Fill dữ liệu cho modal Sửa
+
     var editModal = document.getElementById('editCustomerModal');
     editModal.addEventListener('show.bs.modal', function (event) {
         var button = event.relatedTarget;

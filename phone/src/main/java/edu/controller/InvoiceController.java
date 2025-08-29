@@ -96,12 +96,6 @@ public class InvoiceController {
                              @RequestParam(required = false) String year) {
         LocalDate today = LocalDate.now();
 
-//        // Doanh thu mặc định
-//        model.addAttribute("revenueToday", invoiceService.getRevenueByDate(today));
-//        model.addAttribute("revenueMonth", invoiceService.getRevenueByMonth(today.getMonthValue(), today.getYear()));
-//        model.addAttribute("revenueYear", invoiceService.getRevenueByYear(today.getYear()));
-
-
         DateTimeFormatter dayFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter monthFormat = DateTimeFormatter.ofPattern("MM/yyyy");
 
