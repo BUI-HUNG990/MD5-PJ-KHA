@@ -15,7 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -130,6 +133,20 @@ public class InvoiceServiceImpl implements InvoiceService {
     @Override
     public List<Invoice> getAllInvoices() {
         return invoiceRepository.findAll();
+    }
+
+    public Map<LocalDate, BigDecimal> getRevenueByDaysInMonth(YearMonth yearMonth) {
+        Map<LocalDate, BigDecimal> result = new LinkedHashMap<>();
+        LocalDate start = yearMonth.atDay(1);
+        LocalDate end = yearMonth.atEndOfMonth();
+
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            BigDecimal revenue = invoiceRepository.getRevenueByDate(date);
+            if (revenue != null && revenue.compareTo(BigDecimal.ZERO) > 0) {
+                result.put(date, revenue);
+            }
+        }
+        return result;
     }
 
 }

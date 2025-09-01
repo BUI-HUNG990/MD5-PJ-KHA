@@ -6,8 +6,10 @@ import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public interface InvoiceService {
     Invoice createInvoice(Invoice invoice);
@@ -22,4 +24,6 @@ public interface InvoiceService {
     Invoice findById(Long id);
 
     List<Invoice> getAllInvoices();
+
+    Map<LocalDate, BigDecimal> getRevenueByDaysInMonth(YearMonth yearMonth);
 }

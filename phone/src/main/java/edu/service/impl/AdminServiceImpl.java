@@ -15,6 +15,7 @@ public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
 
     @Override
+
     public Admin register(String username, String rawPassword, String confirmPassword) {
         if (adminRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("Username already exists!");
@@ -45,7 +46,7 @@ public class AdminServiceImpl implements AdminService {
                 return admin;
             }
         }
-        throw new RuntimeException("Invalid username or password!");
+        throw new RuntimeException("Tên người dùng hoặc mật khẩu không hợp lệ");
     }
 
 

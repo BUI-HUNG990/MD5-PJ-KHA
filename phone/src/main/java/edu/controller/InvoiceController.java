@@ -12,9 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -94,10 +97,10 @@ public class InvoiceController {
                              @RequestParam(required = false) String day,
                              @RequestParam(required = false) String month,
                              @RequestParam(required = false) String year) {
-        LocalDate today = LocalDate.now();
 
         DateTimeFormatter dayFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter monthFormat = DateTimeFormatter.ofPattern("MM/yyyy");
+
 
         if (day != null && !day.isBlank()) {
             try {
@@ -110,17 +113,28 @@ public class InvoiceController {
             }
         }
 
+
         if (month != null && !month.isBlank()) {
             try {
-                String[] parts = month.split("/");
-                int m = Integer.parseInt(parts[0]);
-                int y = Integer.parseInt(parts[1]);
-                model.addAttribute("revenueByMonth", invoiceService.getRevenueByMonth(m, y));
+                YearMonth yearMonth = YearMonth.parse(month, monthFormat);
+
+
+                Map<LocalDate, BigDecimal> dailyRevenues = invoiceService.getRevenueByDaysInMonth(yearMonth);
+
+
+                BigDecimal totalRevenue = dailyRevenues.values()
+                        .stream()
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
                 model.addAttribute("month", month);
+                model.addAttribute("dailyRevenues", dailyRevenues);
+                model.addAttribute("revenueByMonth", totalRevenue);
             } catch (Exception e) {
+                e.printStackTrace();
                 model.addAttribute("revenueByMonth", null);
             }
         }
+
 
         if (year != null && !year.isBlank()) {
             try {
@@ -134,4 +148,5 @@ public class InvoiceController {
 
         return "statistics";
     }
+
 }
