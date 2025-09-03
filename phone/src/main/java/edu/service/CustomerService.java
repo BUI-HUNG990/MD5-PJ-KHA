@@ -6,10 +6,14 @@ import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
+// service interface định nghĩa các chức năng nghiệp vụ cho Customer
 public interface CustomerService {
     Customer save(Customer customer);
+
     void delete(Integer id);
+
     List<Customer> findAll();
+
     Customer findById(Integer id);
 
     void update(Customer customer);

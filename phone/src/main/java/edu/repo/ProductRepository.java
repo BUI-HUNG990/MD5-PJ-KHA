@@ -12,7 +12,9 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     Page<Product> findByBrandContainingIgnoreCase(String brand, Pageable pageable);
+
     Page<Product> findByPriceBetween(BigDecimal min, BigDecimal max, Pageable pageable);
+
     Page<Product> findByStockGreaterThanEqual(Integer stock, Pageable pageable);
 
     List<Product> findByBrandContainingIgnoreCase(String brand);

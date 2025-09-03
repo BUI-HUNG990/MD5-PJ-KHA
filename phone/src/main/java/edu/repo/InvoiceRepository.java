@@ -15,12 +15,11 @@ import java.util.List;
 public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
 
     @Query("""
-        SELECT i FROM Invoice i
-        WHERE (LOWER(i.customer.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
-               OR CAST(i.createdAt AS string) LIKE %:keyword%)
-        """)
+            SELECT i FROM Invoice i
+            WHERE (LOWER(i.customer.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+                   OR CAST(i.createdAt AS string) LIKE %:keyword%)
+            """)
     Page<Invoice> search(String keyword, Pageable pageable);
-
 
 
     @Query("SELECT SUM(i.totalAmount) FROM Invoice i WHERE DATE(i.createdAt) = :date AND i.status='COMPLETED'")
@@ -28,7 +27,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Integer> {
 
 
     @Query("SELECT SUM(i.totalAmount) FROM Invoice i WHERE MONTH(i.createdAt) = :month AND YEAR(i.createdAt) = :year AND i.status='COMPLETED'")
-    BigDecimal getRevenueByMonth(@Param("month") int month,@Param("year") int year);
+    BigDecimal getRevenueByMonth(@Param("month") int month, @Param("year") int year);
 
 
     @Query("SELECT SUM(i.totalAmount) FROM Invoice i WHERE YEAR(i.createdAt) = :year AND i.status='COMPLETED'")

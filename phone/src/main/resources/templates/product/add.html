@@ -18,22 +18,26 @@
                     <form th:action="@{/products/save}" th:object="${product}" method="post">
                         <div class="mb-3">
                             <label class="form-label">Tên sản phẩm</label>
-                            <input type="text" th:field="*{name}" class="form-control" placeholder="Nhập tên sản phẩm" required>
+                            <input type="text" th:field="*{name}" class="form-control" placeholder="Nhập tên sản phẩm"
+                                   required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Nhãn hàng</label>
-                            <input type="text" th:field="*{brand}" class="form-control" placeholder="VD: Apple, Samsung" required>
+                            <input type="text" th:field="*{brand}" class="form-control" placeholder="VD: Apple, Samsung"
+                                   required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Giá bán</label>
-                            <input type="number" step="0.01" th:field="*{price}" class="form-control" placeholder="Nhập giá" required>
+                            <input type="number" step="0.01" th:field="*{price}" class="form-control"
+                                   placeholder="Nhập giá" required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Số lượng</label>
-                            <input type="number" th:field="*{stock}" class="form-control" placeholder="Nhập số lượng" required>
+                            <input type="number" th:field="*{stock}" class="form-control" placeholder="Nhập số lượng"
+                                   required>
                         </div>
 
                         <div class="d-flex justify-content-between">

@@ -12,6 +12,7 @@
     margin: 5px 0;
     border-radius: 8px;
 }
+
 .sidebar .nav-link.active,
 .sidebar .nav-link:hover {
     background: #e0e4e8;
@@ -29,6 +30,7 @@
 .card {
     border-radius: 12px;
 }
+
 .chart-placeholder {
     border-radius: 8px;
     border: 2px dashed #ccc;
